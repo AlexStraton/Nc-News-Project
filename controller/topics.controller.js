@@ -1,7 +1,10 @@
 const express = require("express");
 const app = express();
 
-const { fetchAllTopics } = require("../models/topics.models");
+const {
+  fetchAllTopics,
+  fetchAllEndpoints,
+} = require("../models/topics.models");
 
 exports.getAllTopics = (req, res, next) => {
   fetchAllTopics()
@@ -11,4 +14,7 @@ exports.getAllTopics = (req, res, next) => {
     .catch(next);
 };
 
-app.use((err, req, res, next) => {});
+exports.getAllEndpoints = (req, res, next) => {
+  const endpoints = fetchAllEndpoints();
+  res.status(200).send({ endpoints });
+};
