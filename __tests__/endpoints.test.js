@@ -69,18 +69,18 @@ describe("GET /api/articles/1", () => {
         });
       });
   });
-  test.skip("GET 404 responds with a 404 status code", () => {
+  test("GET 404 responds with a 404 status code", () => {
     return request(app)
-      .get("/api/99999999")
+      .get("/api/articles/99999999")
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Not Found");
       });
   });
-  test.skip("GET 400 responds with a 400 status code", () => {
+  test("GET 400 responds with a 400 status code", () => {
     return request(app)
-      .get("/api/notAnId")
-      .expect(400)
+      .get("/api/articles/notAnId")
+      .expect(400) //goes to controller if not needed to be Promise reject
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request");
       });

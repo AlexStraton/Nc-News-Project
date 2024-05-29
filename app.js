@@ -12,21 +12,18 @@ app.get("/api", getAllEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.use((err, req, res, next) => {
-  if (err.msg) {
-    res.status(err.status).send({ msg: err.msg });
+  console.log(err.code);
+  if (err.code === "22P02") {
+    res.status(400).send({ msg: "Bad Request" });
+  } else {
+    next(err);
   }
-  next();
-});
-app.use((err, req, res, next) => {
-  if (err.code) {
-    res.status(404).send({ msg: "Not Found" });
-  }
-  next();
-});
+}); //error handling mimddleeware
 
 app.use((err, req, res, next) => {
-  if (err.code) {
-    res.status(400).send({ msg: "Bad Request" });
+  console.log(err.status);
+  if (err.status && err.msg) {
+    res.status(err.status).send({ msg: `${err.msg}` });
   }
   next();
 });

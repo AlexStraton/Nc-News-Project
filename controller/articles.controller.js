@@ -1,4 +1,3 @@
-const express = require("express");
 const { fetchArticleById } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -7,5 +6,7 @@ exports.getArticleById = (req, res, next) => {
     .then((article) => {
       res.status(200).send({ article });
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 };
