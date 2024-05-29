@@ -26,6 +26,14 @@ describe("GET /api/topics", () => {
         });
       });
   });
+  test("GET 404 responds with a 404 status code", () => {
+    return request(app)
+      .get("/api/notARoute")
+      .expect(404)
+      .then((response) => {
+        expect(response.statusCode).toBe(404);
+      });
+  });
 });
 
 describe("GET /api", () => {
@@ -35,9 +43,46 @@ describe("GET /api", () => {
       .expect(200)
       .then((response) => {
         const { body } = response;
-        console.log("test", body);
         const { endpoints } = body;
         expect(endpoints).toEqual(apiEndpoints);
+      });
+  });
+});
+
+describe("GET /api/articles/1", () => {
+  test("status 200: responds with the correct article", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((response) => {
+        const { article } = response.body;
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test.skip("GET 404 responds with a 404 status code", () => {
+    return request(app)
+      .get("/api/99999999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not Found");
+      });
+  });
+  test.skip("GET 400 responds with a 400 status code", () => {
+    return request(app)
+      .get("/api/notAnId")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
       });
   });
 });
