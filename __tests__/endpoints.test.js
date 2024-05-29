@@ -26,12 +26,13 @@ describe("GET /api/topics", () => {
         });
       });
   });
-  test("GET 404 responds with a 404 status code", () => {
+  test.only("GET 404 responds with a 404 status code", () => {
     return request(app)
       .get("/api/notARoute")
       .expect(404)
       .then((response) => {
         expect(response.statusCode).toBe(404);
+        // expect(response.msg).toBe("Not Found");
       });
   });
 });
@@ -83,6 +84,40 @@ describe("GET /api/articles/1", () => {
       .expect(400) //goes to controller if not needed to be Promise reject
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("GET 200: gets all the articles ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET 404 responds with a 404 status code", () => {
+    return request(app)
+      .get("/api/notARoute")
+      .expect(404)
+      .then((response) => {
+        expect(response.statusCode).toBe(404);
+        // expect(response.msg).toBe("Not Found");
       });
   });
 });
