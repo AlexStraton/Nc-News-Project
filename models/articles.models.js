@@ -24,7 +24,6 @@ exports.fetchAllArticles = () => {
       ORDER BY articles.created_at DESC`
     )
     .then((response) => {
-      console.log(response.rows);
       return response.rows;
     });
 };
