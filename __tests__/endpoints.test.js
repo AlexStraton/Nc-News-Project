@@ -183,7 +183,7 @@ describe("POST api/articles/:article_id/comments ", () => {
         });
       });
   });
-  test("GET 404 responds with a 404 because id is valid but not found", () => {
+  test("POST 404 responds with a 404 because id is valid but not found", () => {
     return request(app)
       .post("/api/articles/99999999/comments")
       .expect(404)
@@ -191,12 +191,36 @@ describe("POST api/articles/:article_id/comments ", () => {
         expect(response.body.msg).toBe("Not Found");
       });
   });
-  test("GET 400 responds with a 400 id is not in the correct format", () => {
+  test("POST 400 responds with a 400 id is not in the correct format", () => {
     return request(app)
       .post("/api/articles/notAnId/comments")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  test.skip("POST 400 responds with bad request when sending a malformed body", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+        not_a_field: "not_a_value",
+      })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  test.skip("POST 404 responds with a 404 because username is valid but not found", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "not_a_username",
+        body: "I love life",
+      })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not Found");
       });
   });
 });
@@ -228,7 +252,6 @@ describe("PATCH api/articles/:article_id ", () => {
       .expect(200)
       .then((response) => {
         const { article } = response.body;
-        console.log(article);
         expect(article).toMatchObject({
           article_id: 1,
           title: "Living in the shadow of a great man",
@@ -271,4 +294,32 @@ test("DELETE:400 responds with an appropriate status and error message when give
     .then((response) => {
       expect(response.body.msg).toBe("Bad Request");
     });
+});
+
+describe("GET /api/users", () => {
+  test("status: 200 responds with all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.users);
+        expect(body.users).toHaveLength(4);
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET 404 responds with a 404 because the route is not found", () => {
+    return request(app)
+      .get("/api/notARoute")
+      .expect(404)
+      .then((response) => {
+        expect(response.statusCode).toBe(404);
+        expect(response.body.msg).toBe("Not Found");
+      });
+  });
 });
