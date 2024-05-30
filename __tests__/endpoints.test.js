@@ -161,3 +161,43 @@ describe("GET /api/articles/1/comments", () => {
       });
   });
 });
+
+describe("POST api/articles/:article_id/comments ", () => {
+  test("POST 201: responds with a comment", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(201)
+      .send({
+        username: "butter_bridge",
+        body: "I love life",
+      })
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment.body).toBe("I love life");
+        expect(comment).toMatchObject({
+          comment_id: 19,
+          body: "I love life",
+          article_id: 1,
+          author: "butter_bridge",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("GET 404 responds with a 404 status code and not found msg", () => {
+    return request(app)
+      .post("/api/articles/99999999/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not Found");
+      });
+  });
+  test("GET 400 responds with a 400 status code and bad request msg", () => {
+    return request(app)
+      .post("/api/articles/notAnId/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+});

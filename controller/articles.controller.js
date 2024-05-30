@@ -25,3 +25,18 @@ exports.getAllArticles = (req, res, next) => {
       next(err);
     });
 };
+
+exports.postCommentForArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { body, username } = req.body;
+  checkArticleIdExists(article_id)
+    .then(() => {
+      return addCommentForArticle(article_id, body, username);
+    })
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
