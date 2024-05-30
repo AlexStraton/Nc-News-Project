@@ -30,9 +30,14 @@ exports.getAllArticles = (req, res, next) => {
 exports.postCommentForArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { body, username } = req.body;
+
+  if (!body) {
+    res.status(400).send({ msg: "Bad Request" });
+    return;
+  }
   checkArticleIdExists(article_id)
     .then(() => {
-      return addCommentForArticle(article_id, body, username);
+      return addCommentForArticle(article_id, username, body);
     })
     .then((comment) => {
       res.status(201).send({ comment });
