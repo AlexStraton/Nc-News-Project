@@ -1,7 +1,9 @@
 const {
   fetchArticleById,
   fetchAllArticles,
+  addCommentForArticle,
 } = require("../models/articles.models");
+const { checkArticleIdExists } = require("../models/comments.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
