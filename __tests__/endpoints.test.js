@@ -224,12 +224,12 @@ describe("PATCH api/articles/:article_id ", () => {
   test.skip("PATCH 200 responds with an empty body when passed an empty body", () => {
     return request(app)
       .patch("/api/articles/1")
-      .send({})
+      .send({ inc_votes: 0 })
       .expect(200)
       .then((response) => {
         const { article } = response.body;
         console.log(article);
-        expect(article).toBe({});
+        expect(article).toBe({ inc_votes: 3 });
       });
   });
   test("PATCH 400 responds with a 400 because new vote is not sent as a number", () => {
@@ -241,4 +241,24 @@ describe("PATCH api/articles/:article_id ", () => {
         expect(response.body.msg).toBe("Bad Request");
       });
   });
+});
+
+test("DELETE:204 deletes the specified comment and sends no body back", () => {
+  return request(app).delete("/api/comments/1").expect(204);
+});
+test("DELETE:404 responds with an appropriate status and error message when given a non-existent id", () => {
+  return request(app)
+    .delete("/api/comments/9999899")
+    .expect(404)
+    .then((response) => {
+      expect(response.body.msg).toBe("Not Found");
+    });
+});
+test("DELETE:400 responds with an appropriate status and error message when given an invalid id", () => {
+  return request(app)
+    .delete("/api/comments/not-a-comment")
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe("Bad Request");
+    });
 });
