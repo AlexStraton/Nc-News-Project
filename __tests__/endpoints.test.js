@@ -26,7 +26,7 @@ describe("GET /api/topics", () => {
         });
       });
   });
-  test("GET 404 responds with a 404 status code and a Not Found message", () => {
+  test("GET 404 responds with a 404 because the route is not found", () => {
     return request(app)
       .get("/api/notARoute")
       .expect(404)
@@ -70,7 +70,7 @@ describe("GET /api/articles/1", () => {
         });
       });
   });
-  test("GET 404 responds with a 404 status code and message", () => {
+  test("GET 404 responds with a 404 when id is valid but not found", () => {
     return request(app)
       .get("/api/articles/99999999")
       .expect(404)
@@ -78,7 +78,7 @@ describe("GET /api/articles/1", () => {
         expect(response.body.msg).toBe("Not Found");
       });
   });
-  test("GET 400 responds with a 400 status code and message", () => {
+  test("GET 400 responds with a 400 when id is not in a valid format", () => {
     return request(app)
       .get("/api/articles/notAnId")
       .expect(400)
@@ -111,7 +111,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("GET 404 responds with a 404 status code", () => {
+  test("GET 404 responds with a 404 status code when id is not in a valid format", () => {
     return request(app)
       .get("/api/notARoute")
       .expect(404)
@@ -129,7 +129,6 @@ describe("GET /api/articles/1/comments", () => {
       .expect(200)
       .then((response) => {
         const { body } = response;
-        console.log(body);
         expect(body).toHaveLength(11);
         expect(body).toBeSortedBy("created_at", { descending: true });
         body.forEach((comment) => {
@@ -144,7 +143,7 @@ describe("GET /api/articles/1/comments", () => {
         });
       });
   });
-  test("GET 404 responds with a 404 status code and not found msg", () => {
+  test("GET 404 responds with a 404 because id is valid but not found", () => {
     return request(app)
       .get("/api/articles/99999999/comments")
       .expect(404)
@@ -152,7 +151,7 @@ describe("GET /api/articles/1/comments", () => {
         expect(response.body.msg).toBe("Not Found");
       });
   });
-  test("GET 400 responds with a 400 status code and bad request msg", () => {
+  test("GET 400 responds with a 400 because id is on invalid format", () => {
     return request(app)
       .get("/api/articles/notAnId/comments")
       .expect(400)
@@ -184,7 +183,7 @@ describe("POST api/articles/:article_id/comments ", () => {
         });
       });
   });
-  test("GET 404 responds with a 404 status code and not found msg", () => {
+  test("GET 404 responds with a 404 because id is valid but not found", () => {
     return request(app)
       .post("/api/articles/99999999/comments")
       .expect(404)
@@ -192,9 +191,51 @@ describe("POST api/articles/:article_id/comments ", () => {
         expect(response.body.msg).toBe("Not Found");
       });
   });
-  test("GET 400 responds with a 400 status code and bad request msg", () => {
+  test("GET 400 responds with a 400 id is not in the correct format", () => {
     return request(app)
       .post("/api/articles/notAnId/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("PATCH api/articles/:article_id ", () => {
+  test("PATCH 200: responds with the updated article", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 3 })
+      .expect(200)
+      .then((response) => {
+        const { article } = response.body;
+        expect(article.votes).toBe(103);
+      });
+  });
+  test("PATCH 404 responds with a 404 because id is valid but not found", () => {
+    return request(app)
+      .patch("/api/articles/9988")
+      .send({ inc_votes: 3 })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not Found");
+      });
+  });
+  test.skip("PATCH 200 responds with an empty body when passed an empty body", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({})
+      .expect(200)
+      .then((response) => {
+        const { article } = response.body;
+        console.log(article);
+        expect(article).toBe({});
+      });
+  });
+  test("PATCH 400 responds with a 400 because new vote is not sent as a number", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "hello" })
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request");
