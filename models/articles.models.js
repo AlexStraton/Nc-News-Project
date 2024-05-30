@@ -31,7 +31,7 @@ exports.fetchAllArticles = () => {
 exports.addCommentForArticle = (article_id, username, body) => {
   return db
     .query(
-      `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *`,
+      `INSERT INTO comments (article_id, body, author) VALUES ($1, $2, $3) RETURNING *`,
       [article_id, body, username]
     )
     .then((response) => {

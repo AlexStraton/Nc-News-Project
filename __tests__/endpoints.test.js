@@ -187,7 +187,12 @@ describe("POST api/articles/:article_id/comments ", () => {
     return request(app)
       .post("/api/articles/99999999/comments")
       .expect(404)
+      .send({
+        username: "butter_bridge",
+        body: "This is a test comment",
+      })
       .then((response) => {
+        console.log(response.body);
         expect(response.body.msg).toBe("Not Found");
       });
   });
@@ -199,19 +204,18 @@ describe("POST api/articles/:article_id/comments ", () => {
         expect(response.body.msg).toBe("Bad Request");
       });
   });
-  test.skip("POST 400 responds with bad request when sending a malformed body", () => {
+  test("POST 400 responds with bad request when sending a malformed body", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
         username: "butter_bridge",
-        not_a_field: "not_a_value",
       })
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request");
       });
   });
-  test.skip("POST 404 responds with a 404 because username is valid but not found", () => {
+  test("POST 404 responds with a 404 because username is valid but not found", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
