@@ -26,9 +26,9 @@
       ]
     }
   },
-  "GET /api/articles/1": {
+  "GET /api/articles/:article_id": {
     "description": "serves an article by its id",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": [],
     "exampleResponse": {
       "articles": [
         {
@@ -40,6 +40,54 @@
           "created_at": "2020-07-09T20:11:00.000Z",
           "votes": 100,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "gets all comments for an article_id",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "comment_id": 19,
+          "body": "I love life",
+          "article_id": 1,
+          "author": "butter_bridge",
+          "votes": 0,
+          "created_at": "expect.any(String)"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a comment for an article_id",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "comment_id": 19,
+          "body": "I love life",
+          "article_id": 1,
+          "author": "butter_bridge",
+          "votes": 0,
+          "created_at": "expect.any(String)"
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "responds with the updated article",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "comment_id": 19,
+          "body": "I love life",
+          "article_id": 1,
+          "author": "butter_bridge",
+          "votes": 103,
+          "created_at": "expect.any(String)"
         }
       ]
     }

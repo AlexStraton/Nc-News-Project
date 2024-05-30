@@ -7,6 +7,7 @@ const {
   getArticleById,
   getAllArticles,
   postCommentForArticle,
+  patchArticleById,
 } = require("./controller/articles.controller");
 const { getCommentsForArticle } = require("./controller/comments.controller");
 
@@ -21,6 +22,7 @@ app.get("/api/articles/:article_id/comments", getCommentsForArticle);
 
 app.post("/api/articles/:article_id/comments", postCommentForArticle);
 
+app.patch("/api/articles/:article_id", patchArticleById);
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Not Found" });
 });
@@ -41,6 +43,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  console.log(err);
   res.status(500).send({ msg: "Internal Server Error" });
 });
 module.exports = app;

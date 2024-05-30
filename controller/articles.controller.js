@@ -2,6 +2,7 @@ const {
   fetchArticleById,
   fetchAllArticles,
   addCommentForArticle,
+  insertVotes,
 } = require("../models/articles.models");
 const { checkArticleIdExists } = require("../models/comments.models");
 
@@ -35,6 +36,21 @@ exports.postCommentForArticle = (req, res, next) => {
     })
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  checkArticleIdExists(article_id)
+    .then(() => {
+      return insertVotes(article_id, inc_votes);
+    })
+    .then((response) => {
+      res.status(200).send({ article: response });
     })
     .catch((err) => {
       next(err);
