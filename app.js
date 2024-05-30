@@ -19,7 +19,7 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getCommentsForArticle);
 
-// app.post("/api/articles/:article_id/comments", postCommentForArticle);
+app.post("/api/articles/:article_id/comments", postCommentForArticle);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Not Found" });
