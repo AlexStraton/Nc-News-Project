@@ -192,7 +192,6 @@ describe("POST api/articles/:article_id/comments ", () => {
         body: "This is a test comment",
       })
       .then((response) => {
-        console.log(response.body);
         expect(response.body.msg).toBe("Not Found");
       });
   });
