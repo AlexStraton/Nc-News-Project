@@ -25,9 +25,7 @@ exports.checkArticleIdExists = (article_id) => {
 exports.removeCommentById = (comment_id) => {
   return db
     .query("DELETE FROM comments WHERE comment_id = $1;", [comment_id])
-    .then((answer) => {
-      console.log(answer);
-    });
+    .then((answer) => {});
 };
 
 exports.checkCommentIdExists = (comment_id) => {
