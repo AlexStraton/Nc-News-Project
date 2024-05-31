@@ -14,18 +14,23 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchAllArticles = () => {
-  return db
-    .query(
-      `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count  
-      FROM articles
-      LEFT JOIN comments ON articles.article_id = comments.article_id
-      GROUP BY articles.article_id
-      ORDER BY articles.created_at DESC`
-    )
-    .then((response) => {
-      return response.rows;
-    });
+exports.fetchAllArticles = (topic) => {
+  const queryValues = [];
+  let queryString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
+FROM articles
+LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  if (topic) {
+    queryValues.push(topic);
+    queryString += ` WHERE articles.topic = $1`;
+  }
+
+  queryString += ` GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC`;
+  console.log(queryString);
+  return db.query(queryString, queryValues).then((response) => {
+    return response.rows;
+  });
 };
 
 exports.addCommentForArticle = (article_id, username, body) => {
