@@ -27,7 +27,6 @@ LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
   queryString += ` GROUP BY articles.article_id
     ORDER BY articles.created_at DESC`;
-  console.log(queryString);
   return db.query(queryString, queryValues).then((response) => {
     return response.rows;
   });

@@ -89,13 +89,12 @@ describe("GET /api/articles/1", () => {
 });
 
 describe("GET /api/articles", () => {
-  test.only("GET 200: gets all the articles ", () => {
+  test("GET 200: gets all the articles ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then((response) => {
         const { articles } = response.body;
-        console.log(articles);
         expect(articles).toHaveLength(13);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
@@ -113,7 +112,7 @@ describe("GET /api/articles", () => {
       });
   });
 
-  test.only("GET 404 responds with a 404 status code when id is not in a valid format", () => {
+  test("GET 404 responds with a 404 status code when id is not in a valid format", () => {
     return request(app)
       .get("/api/notARoute")
       .expect(404)
@@ -164,7 +163,7 @@ describe("GET /api/articles/1/comments", () => {
 });
 
 describe("GET articles filtered by topic", () => {
-  test.only("GET 200 responds with articles filtered by topic", () => {
+  test("GET 200 responds with articles filtered by topic", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
@@ -176,7 +175,7 @@ describe("GET articles filtered by topic", () => {
         });
       });
   });
-  test.only("GET 404 responds with a 404 status code if no articles are found for the given topic", () => {
+  test("GET 404 responds with a 404 status code if no articles are found for the given topic", () => {
     return request(app)
       .get("/articles?topic=not-a-topic")
       .expect(404)
