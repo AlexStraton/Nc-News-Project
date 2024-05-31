@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["topic"],
     "exampleResponse": {
       "articles": [
         {
@@ -28,7 +28,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves an article by its id",
-    "queries": [],
+    "queries": ["comment_count"],
     "exampleResponse": {
       "articles": [
         {
@@ -90,6 +90,13 @@
           "created_at": "expect.any(String)"
         }
       ]
+    }
+  },
+  "DELETE /api/articles/:comment_id": {
+    "description": "deletes specified comment",
+    "queries": [],
+    "exampleResponse": {
+      "articles": []
     }
   }
 }
