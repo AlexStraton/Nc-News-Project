@@ -3,8 +3,12 @@ const {
   fetchAllArticles,
   addCommentForArticle,
   insertVotes,
+  checkTopicExists,
 } = require("../models/articles.models");
-const { checkArticleIdExists } = require("../models/comments.models");
+const {
+  checkArticleIdExists,
+  removeCommentById,
+} = require("../models/comments.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -20,7 +24,10 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getAllArticles = (req, res, next) => {
   const { topic } = req.query;
-  fetchAllArticles(topic)
+  checkTopicExists(topic)
+    .then(() => {
+      return fetchAllArticles(topic);
+    })
     .then((articles) => {
       res.status(200).send({ articles });
     })

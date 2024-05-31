@@ -189,10 +189,20 @@ describe("GET articles filtered by topic", () => {
   });
   test("GET 404 responds with a 404 status code if no articles are found for the given topic", () => {
     return request(app)
-      .get("/articles?topic=not-a-topic")
+      .get("/api/articles?topic=not-a-topic")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("Not Found");
+        expect(response.body.msg).toBe("Topic doesn't exist");
+      });
+  });
+  test("GET 200 if topic exists but there are no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        console.log(articles);
+        expect(articles).toHaveLength(0);
       });
   });
 });
