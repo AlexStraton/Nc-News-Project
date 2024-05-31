@@ -88,6 +88,18 @@ describe("GET /api/articles/1", () => {
   });
 });
 
+describe("GET comment count /api/articles/1", () => {
+  test("status 200: responds with article that includes comment_count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((response) => {
+        const { article } = response.body;
+        expect(article.comment_count).toBe(11);
+      });
+  });
+});
+
 describe("GET /api/articles", () => {
   test("GET 200: gets all the articles ", () => {
     return request(app)
@@ -330,7 +342,6 @@ describe("GET /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.users);
         expect(body.users).toHaveLength(4);
         body.users.forEach((user) => {
           expect(user).toMatchObject({
