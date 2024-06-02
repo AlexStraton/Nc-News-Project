@@ -3,6 +3,7 @@ const {
   checkArticleIdExists,
   removeCommentById,
   checkCommentIdExists,
+  includeVotes,
 } = require("../models/comments.models");
 
 exports.getCommentsForArticle = (req, res, next) => {
@@ -28,6 +29,22 @@ exports.deleteByCommentId = (req, res, next) => {
     })
     .then(() => {
       res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchCommentVote = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+
+  checkCommentIdExists(comment_id)
+    .then(() => {
+      return includeVotes(inc_votes, comment_id);
+    })
+    .then((comment) => {
+      res.status(200).send({ comment });
     })
     .catch((err) => {
       next(err);

@@ -12,6 +12,7 @@ const {
 const {
   getCommentsForArticle,
   deleteByCommentId,
+  patchCommentVote,
 } = require("./controller/comments.controller");
 const {
   getAllUsers,
@@ -26,13 +27,14 @@ app.get("/api", getAllEndpoints); //y
 app.get("/api/articles/:article_id", getArticleById); //y
 app.get("/api/articles", getAllArticles); //y
 app.get("/api/articles/:article_id/comments", getCommentsForArticle); //y
-app.get("/api/users", getAllUsers);
+app.get("/api/users", getAllUsers); //y
 
-app.get("/api/users/:username", getUserByUsername);
+app.get("/api/users/:username", getUserByUsername); //y
 
 app.post("/api/articles/:article_id/comments", postCommentForArticle); //y
 
 app.patch("/api/articles/:article_id", patchArticleById); //y
+app.patch("/api/comments/:comment_id", patchCommentVote); //y
 
 app.delete("/api/comments/:comment_id", deleteByCommentId); //y
 

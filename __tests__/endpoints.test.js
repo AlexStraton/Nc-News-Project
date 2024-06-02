@@ -510,3 +510,52 @@ describe("GET /api/users/:username", () => {
   //     });
   // });
 });
+
+describe("PATCH /api/comments/:comment_id ", () => {
+  test("PATCH 200: responds with the updated comment vote", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 4 })
+      .expect(200)
+      .then((response) => {
+        const { comment } = response.body;
+
+        expect(comment.votes).toBe(20);
+      });
+  });
+  test("PATCH 200 responds with same body when passed 0 votes", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 0 })
+      .expect(200)
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment).toMatchObject({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          article_id: 9,
+          author: "butter_bridge",
+          votes: 16,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+  test("PATCH 400 responds with a 400 because new vote is not sent as a number", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "hello" })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  test("PATCH 404 responds with a 404 because id is valid but not found", () => {
+    return request(app)
+      .patch("/api/comments/99988")
+      .send({ inc_votes: 4 })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not Found");
+      });
+  });
+});
