@@ -16,6 +16,7 @@ exports.getAllUsers = (req, res, next) => {
 
 exports.getUserByUsername = (req, res, next) => {
   const { username } = req.params;
+
   checkUsernameExists(username)
     .then(() => {
       return fetchUserByUsername(username);

@@ -21,28 +21,27 @@ const {
 const app = express();
 app.use(express.json());
 
-app.get("/api/topics", getAllTopics);
-app.get("/api", getAllEndpoints);
-app.get("/api/articles/:article_id", getArticleById);
-app.get("/api/articles", getAllArticles);
-app.get("/api/articles/:article_id/comments", getCommentsForArticle);
+app.get("/api/topics", getAllTopics); //y
+app.get("/api", getAllEndpoints); //y
+app.get("/api/articles/:article_id", getArticleById); //y
+app.get("/api/articles", getAllArticles); //y
+app.get("/api/articles/:article_id/comments", getCommentsForArticle); //y
 app.get("/api/users", getAllUsers);
+
 app.get("/api/users/:username", getUserByUsername);
 
-app.post("/api/articles/:article_id/comments", postCommentForArticle);
+app.post("/api/articles/:article_id/comments", postCommentForArticle); //y
 
-app.patch("/api/articles/:article_id", patchArticleById);
+app.patch("/api/articles/:article_id", patchArticleById); //y
 
-app.delete("/api/comments/:comment_id", deleteByCommentId);
+app.delete("/api/comments/:comment_id", deleteByCommentId); //y
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({ msg: "Bad Request" });
-  }
-  if (err.code === "23503") {
+  } else if (err.code === "23503") {
     res.status(404).send({ msg: "Not Found" });
   } else {
-    // console.log(err);
     next(err);
   }
 });

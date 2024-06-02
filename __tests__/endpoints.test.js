@@ -479,7 +479,7 @@ describe("GET /api/users", () => {
 });
 
 describe("GET /api/users/:username", () => {
-  test.only("status 200: responds with the correct user when given correct user_id", () => {
+  test("status 200: responds with the correct user when given correct user_id", () => {
     return request(app)
       .get("/api/users/butter_bridge")
       .expect(200)
@@ -492,13 +492,21 @@ describe("GET /api/users/:username", () => {
         expect(user[0].name).toBe("jonny");
       });
   });
-  test.only("GET 404 responds with a 404 when username does not exist", () => {
+  test("GET 404 responds with a 404 when username does not exist", () => {
     return request(app)
       .get("/api/users/username_does_not_exist")
       .expect(404)
       .then((response) => {
-        console.log(response.body);
         expect(response.body.msg).toBe("Username does not exist");
       });
   });
+  // test.only("GET 400 responds with a 400 when username is not in a valid format", () => {
+  //   return request(app)
+  //     .get("/api/users/#@$5555.!")
+  //     .expect(400)
+  //     .then((response) => {
+  //       console.log(response.body);
+  //       expect(response.body.msg).toBe("Bad Request");
+  //     });
+  // });
 });
