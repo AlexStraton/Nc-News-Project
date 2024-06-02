@@ -24,9 +24,11 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getAllArticles = (req, res, next) => {
   const { topic } = req.query;
+  const { sort_by } = req.query;
+  const { order } = req.query;
   checkTopicExists(topic)
     .then(() => {
-      return fetchAllArticles(topic);
+      return fetchAllArticles(topic, sort_by, order);
     })
     .then((articles) => {
       res.status(200).send({ articles });

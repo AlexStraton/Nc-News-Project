@@ -88,7 +88,7 @@ describe("GET /api/articles/1", () => {
   });
 });
 
-describe("GET comment count /api/articles/1", () => {
+describe("GET  /api/articles/1  comment count", () => {
   test("status 200: responds with article that includes comment_count", () => {
     return request(app)
       .get("/api/articles/1")
@@ -123,7 +123,6 @@ describe("GET /api/articles", () => {
         });
       });
   });
-
   test("GET 404 responds with a 404 status code when id is not in a valid format", () => {
     return request(app)
       .get("/api/notARoute")
@@ -131,6 +130,113 @@ describe("GET /api/articles", () => {
       .then((response) => {
         expect(response.statusCode).toBe(404);
         expect(response.body.msg).toBe("Not Found");
+      });
+  });
+});
+
+describe("GET /api/articles by different queries", () => {
+  test("GET 200: sort by votes ", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+  test("GET 200: sort by author ", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("GET 200: sort by topic ", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("topic", { descending: true });
+      });
+  });
+  test("GET 200: sort by comment_count ", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
+      });
+  });
+  test("GET 400 responds with a 400 status code when sort_by is not a valid column", () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalidColumn")
+      .expect(400)
+      .then((response) => {
+        console.log(response);
+        expect(response.statusCode).toBe(400);
+        expect(response.body.msg).toBe("Invalid sort_by column");
+      });
+  });
+});
+
+describe("GET /api/articles orders articles by asc or desc", () => {
+  test("GET 200: orders all the articles in descending order", () => {
+    return request(app)
+      .get("/api/articles/?sort_by=votes&order=desc")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        expect(articles).toBeSortedBy("votes", { descending: true });
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("GET 200: orders all the articles in ascending order", () => {
+    return request(app)
+      .get("/api/articles/?sort_by=comment_count&order=asc")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        expect(articles).toBeSortedBy("comment_count");
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("GET 400 responds with a 400 when order isn't asc or desc", () => {
+    return request(app)
+      .get("/api/articles/?sort_by=votes&order=not_desc")
+      .expect(400)
+      .then((response) => {
+        expect(response.statusCode).toBe(400);
+        expect(response.body.msg).toBe("Invalid order value");
       });
   });
 });
@@ -174,7 +280,7 @@ describe("GET /api/articles/1/comments", () => {
   });
 });
 
-describe("GET articles filtered by topic", () => {
+describe("GET /api/articles?topic=mitch ", () => {
   test("GET 200 responds with articles filtered by topic", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
@@ -201,13 +307,12 @@ describe("GET articles filtered by topic", () => {
       .expect(200)
       .then((response) => {
         const { articles } = response.body;
-        console.log(articles);
         expect(articles).toHaveLength(0);
       });
   });
 });
 
-describe("POST api/articles/:article_id/comments ", () => {
+describe("POST /api/articles/:article_id/comments ", () => {
   test("POST 201: responds with a comment", () => {
     return request(app)
       .post("/api/articles/1/comments")
@@ -238,7 +343,6 @@ describe("POST api/articles/:article_id/comments ", () => {
         body: "This is a test comment",
       })
       .then((response) => {
-        console.log(response.body);
         expect(response.body.msg).toBe("Not Found");
       });
   });
@@ -275,7 +379,7 @@ describe("POST api/articles/:article_id/comments ", () => {
   });
 });
 
-describe("PATCH api/articles/:article_id ", () => {
+describe("PATCH /api/articles/:article_id ", () => {
   test("PATCH 200: responds with the updated article", () => {
     return request(app)
       .patch("/api/articles/1")
@@ -326,24 +430,26 @@ describe("PATCH api/articles/:article_id ", () => {
   });
 });
 
-test("DELETE:204 deletes the specified comment and sends no body back", () => {
-  return request(app).delete("/api/comments/1").expect(204);
-});
-test("DELETE:404 responds with an appropriate status and error message when given a non-existent id", () => {
-  return request(app)
-    .delete("/api/comments/9999899")
-    .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe("Not Found");
-    });
-});
-test("DELETE:400 responds with an appropriate status and error message when given an invalid id", () => {
-  return request(app)
-    .delete("/api/comments/not-a-comment")
-    .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe("Bad Request");
-    });
+describe("DELETE /api/users  delete comment by user_id", () => {
+  test("DELETE:204 deletes the specified comment and sends no body back", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("DELETE:404 responds with 404 when id is valid but does not exist", () => {
+    return request(app)
+      .delete("/api/comments/9999899")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not Found");
+      });
+  });
+  test("DELETE:400 responds 400 and error message when given an invalid id", () => {
+    return request(app)
+      .delete("/api/comments/not-a-valid-id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
 });
 
 describe("GET /api/users", () => {
