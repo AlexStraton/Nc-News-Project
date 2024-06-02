@@ -1,6 +1,7 @@
 const {
   fetchAllUsers,
   fetchUserByUsername,
+  checkUsernameExists,
 } = require("../models/users.models");
 
 exports.getAllUsers = (req, res, next) => {
@@ -15,7 +16,10 @@ exports.getAllUsers = (req, res, next) => {
 
 exports.getUserByUsername = (req, res, next) => {
   const { username } = req.params;
-  fetchUserByUsername(username)
+  checkUsernameExists(username)
+    .then(() => {
+      return fetchUserByUsername(username);
+    })
     .then((user) => {
       res.status(200).send({ user });
     })
