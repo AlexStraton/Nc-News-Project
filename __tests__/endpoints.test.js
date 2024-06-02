@@ -180,7 +180,6 @@ describe("GET /api/articles by different queries", () => {
       .get("/api/articles?sort_by=invalidColumn")
       .expect(400)
       .then((response) => {
-        console.log(response);
         expect(response.statusCode).toBe(400);
         expect(response.body.msg).toBe("Invalid sort_by column");
       });
@@ -475,6 +474,23 @@ describe("GET /api/users", () => {
       .then((response) => {
         expect(response.statusCode).toBe(404);
         expect(response.body.msg).toBe("Not Found");
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("status 200: responds with the correct user when given correct user_id", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then((response) => {
+        const { user } = response.body;
+        console.log(user[0]);
+        expect(user[0].username).toBe("butter_bridge");
+        expect(user[0].avatar_url).toBe(
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        );
+        expect(user[0].name).toBe("jonny");
       });
   });
 });

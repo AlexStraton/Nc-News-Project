@@ -5,10 +5,7 @@ const {
   insertVotes,
   checkTopicExists,
 } = require("../models/articles.models");
-const {
-  checkArticleIdExists,
-  removeCommentById,
-} = require("../models/comments.models");
+const { checkArticleIdExists } = require("../models/comments.models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
