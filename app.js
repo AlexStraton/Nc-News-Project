@@ -8,6 +8,7 @@ const {
   getAllArticles,
   postCommentForArticle,
   patchArticleById,
+  postNewArticle,
 } = require("./controller/articles.controller");
 const {
   getCommentsForArticle,
@@ -32,6 +33,7 @@ app.get("/api/users", getAllUsers); //y
 app.get("/api/users/:username", getUserByUsername); //y
 
 app.post("/api/articles/:article_id/comments", postCommentForArticle); //y
+app.post("/api/articles", postNewArticle);
 
 app.patch("/api/articles/:article_id", patchArticleById); //y
 app.patch("/api/comments/:comment_id", patchCommentVote); //y
@@ -52,6 +54,7 @@ app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: `${err.msg}` });
   } else {
+    // console.log(err);
     next(err);
   }
 });

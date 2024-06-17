@@ -16,6 +16,11 @@ exports.getAllUsers = (req, res, next) => {
 
 exports.getUserByUsername = (req, res, next) => {
   const { username } = req.params;
+  const regex = /^[A-Za-z]+$/g;
+
+  if (regex.test(username)) {
+    res.status(400).send({ msg: "Bad Request" });
+  }
 
   checkUsernameExists(username)
     .then(() => {
