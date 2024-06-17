@@ -4,6 +4,7 @@ const {
   addCommentForArticle,
   insertVotes,
   checkTopicExists,
+  addNewArticle,
 } = require("../models/articles.models");
 const { checkArticleIdExists } = require("../models/comments.models");
 
@@ -23,6 +24,9 @@ exports.getAllArticles = (req, res, next) => {
   const { topic } = req.query;
   const { sort_by } = req.query;
   const { order } = req.query;
+  // const { limit } = req.query;
+  // const { p } = req.query;
+
   checkTopicExists(topic)
     .then(() => {
       return fetchAllArticles(topic, sort_by, order);
@@ -41,7 +45,6 @@ exports.postCommentForArticle = (req, res, next) => {
 
   if (!body) {
     res.status(400).send({ msg: "Bad Request" });
-    return;
   }
   checkArticleIdExists(article_id)
     .then(() => {
@@ -64,6 +67,21 @@ exports.patchArticleById = (req, res, next) => {
     })
     .then((response) => {
       res.status(200).send({ article: response });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postNewArticle = (req, res, next) => {
+  const { author, title, body, topic, article_img_url } = req.body;
+
+  if (!body) {
+    res.status(400).send({ msg: "Bad Request" });
+  }
+  addNewArticle(author, title, body, topic, article_img_url)
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch((err) => {
       next(err);

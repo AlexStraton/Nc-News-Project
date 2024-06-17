@@ -500,15 +500,6 @@ describe("GET /api/users/:username", () => {
         expect(response.body.msg).toBe("Username does not exist");
       });
   });
-  // test.only("GET 400 responds with a 400 when username is not in a valid format", () => {
-  //   return request(app)
-  //     .get("/api/users/#@$5555.!")
-  //     .expect(400)
-  //     .then((response) => {
-  //       console.log(response.body);
-  //       expect(response.body.msg).toBe("Bad Request");
-  //     });
-  // });
 });
 
 describe("PATCH /api/comments/:comment_id ", () => {
@@ -559,3 +550,78 @@ describe("PATCH /api/comments/:comment_id ", () => {
       });
   });
 });
+
+describe("POST /api/articles  posts an article", () => {
+  test("POST 200: responds with new added article ", () => {
+    return request(app)
+      .post("/api/articles")
+      .expect(200)
+      .send({
+        article_id: 14,
+        author: "icellusedkars",
+        title: "Purpose",
+        body: "Hey there!",
+        topic: "mitch",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .then((response) => {
+        const { article } = response.body;
+        expect(article).toMatchObject({
+          article_id: 14,
+          title: "Purpose",
+          topic: "mitch",
+          author: "icellusedkars",
+          body: "Hey there!",
+          created_at: expect.any(String),
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("POST 400 responds with bad request when sending a malformed body", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        some_key: "some_value",
+      })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+  test("POST 404 responds with bad request when using a non-existent topic or author", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        article_id: 14,
+        author: "notAnAuthor",
+        title: "Purpose",
+        body: "Hey there!",
+        topic: "notATopic",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(404)
+      .then((response) => {
+        console.log(response);
+        expect(response.body.msg).toBe("Not Found");
+      });
+  });
+});
+
+// describe("GET /api/articles", () => {
+//   test.only("GET 200: responds with paginated articles and total_count", () => {
+//     return request(app)
+//       .get("/api/articles")
+//       .query({ limit: 10, p: 1 })
+//       .expect(200)
+//       .then((response) => {
+//         console.log(response.body);
+
+//         expect(response.body.articles.length).toBeLessThanOrEqual(10);
+//         expect(response.body.total_count).toBeGreaterThan(0);
+//       });
+//   });
+// });

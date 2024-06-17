@@ -99,3 +99,16 @@ exports.insertVotes = (article_id, inc_votes) => {
       return response.rows[0];
     });
 };
+
+exports.addNewArticle = (author, title, body, topic, article_img_url) => {
+  return db
+    .query(
+      `INSERT INTO articles ( author, title, body, topic, article_img_url)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING *`,
+      [author, title, body, topic, article_img_url]
+    )
+    .then((response) => {
+      return response.rows[0];
+    });
+};
